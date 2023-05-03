@@ -4,10 +4,13 @@
  */
 package nurul.controller;
 
-import com.sun.jdi.connect.spi.Connection;
+import java.lang.System.Logger.Level;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
+import java.util.List;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import nurul.dao.AnggotaDao;
 import nurul.dao.AnggotaDaoImpl;
 import nurul.dao.Koneksi;
@@ -19,33 +22,112 @@ import nurul.view.formAnggota;
  * @author DELL
  */
 public class AnggotaController {
+
     private formAnggota formAnggota;
     private Anggota anggota;
-    private AnggotaDao anggotaDao;
+    private AnggotaDao dao;
     private Connection con;
-    private Koneksi koneksi;
-    
-    public AnggotaController(formAnggota formAnggota){
+    private Koneksi k;
+
+    public AnggotaController(formAnggota formAnggota) {
         try {
-            this.formAnggota = new formAnggota();
-            anggotaDao = new AnggotaDaoImpl();
-            con = (Connection) new Koneksi().getKoneksi();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AnggotaController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(AnggotaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void bersihForm(){
-        formAnggota.getTxtkodeAnggota().setText("");
-        formAnggota.getTxtnamaAnggota().setText("");
+            this.formAnggota = formAnggota;
+            dao = new AnggotaDaoImpl();
+            k = new Koneksi();
+            con = k.getKoneksi();
+        } catch (Exception ex) {
+            Logger.getLogger(AnggotaController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } 
         
     }
+
+    public void clearForm() {
+        formAnggota.getTxtkodeAnggota().setText("");
+        formAnggota.getTxtnamaAnggota().setText("");
+        formAnggota.getTxtAlamat().setText("");
+    }
     
-    public void isiCboJenisKelamin(){
+     public void isiCboJenisKelamin() {
         formAnggota.getCboJenisKelamin().removeAllItems();
         formAnggota.getCboJenisKelamin().addItem("L");
         formAnggota.getCboJenisKelamin().addItem("P");
     }
+
+    public void insert() {
+        try {
+            anggota = new Anggota();
+            anggota.setKodeAnggota(
+                    formAnggota.getTxtkodeAnggota().getText());
+            anggota.setNamaAnggota(
+                    formAnggota.getTxtnamaAnggota().getText());
+            anggota.setAlamat(
+                    formAnggota.getTxtAlamat().getText());
+            anggota.setJenisKelamin(
+                    formAnggota.getCboJenisKelamin()
+                            .getSelectedItem().toString());
+            dao.insert(con, anggota);
+            JOptionPane.showMessageDialog(formAnggota, "Entri Ok");
+        } catch (Exception ex) {
+            Logger.getLogger(AnggotaController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void update() {
+        try {
+            anggota = new Anggota();
+            anggota.setKodeAnggota(formAnggota.getTxtkodeAnggota().getText());
+            anggota.setNamaAnggota(formAnggota.getTxtnamaAnggota().getText());
+            anggota.setAlamat(formAnggota.getTxtAlamat().getText());
+            anggota.setJenisKelamin(
+                    formAnggota.getCboJenisKelamin().getSelectedItem().toString());
+            dao.update(con, anggota);
+            JOptionPane.showMessageDialog(formAnggota, "Update Ok");
+        } catch (Exception ex) {
+            Logger.getLogger(AnggotaController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+
+    public void delete() {
+        try {
+            dao.delete(con, anggota);
+            JOptionPane.showMessageDialog(formAnggota, "Delete Ok");
+        } catch (Exception ex) {
+            Logger.getLogger(AnggotaController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+
+    public void cari(){
+        try {
+            String kode = formAnggota.getTxtkodeAnggota().getText();
+            anggota = dao.getAnggota(con,kode);
+            if (anggota != null){
+                anggota.setNamaAnggota(formAnggota.getTxtnamaAnggota().getText());
+                anggota.setAlamat(formAnggota.getTxtAlamat().getText());
+                anggota.setJenisKelamin(formAnggota.getCboJenisKelamin().getSelectedItem().toString());
+            }
+         } catch (Exception ex) {
+            Logger.getLogger(AnggotaController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void tampil(){
+        try {
+            DefaultTableModel tabel = (DefaultTableModel)formAnggota.getTblAnggota().getModel();
+            tabel.setRowCount(0);
+            List<Anggota> list = dao.getAllAnggota(con);
+            for (Anggota anggota1 : list) {
+                Object[] row = {
+                    anggota1.getKodeAnggota(),
+                    anggota1.getNamaAnggota(),
+                    anggota1.getJenisKelamin(),
+                    anggota1.getAlamat()
+                };
+                tabel.addRow(row);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(AnggotaController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+
 }

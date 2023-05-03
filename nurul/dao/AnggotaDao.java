@@ -5,13 +5,23 @@
 package nurul.dao;
 
 
+
 import nurul.model.Anggota;
 import java.sql.Connection;
+import java.util.List;
+
 
 /**
  *
  * @author DELL
  */
 public interface AnggotaDao {
-    void insert(Connection con,Anggota anggota) throws Exception;
+    
+    public void insert(Connection con,Anggota anggota) throws Exception;
+    public void update(Connection con,Anggota anggota) throws Exception;
+    public void delete(Connection con,Anggota anggota) throws Exception;
+    public Anggota getAnggota(Connection con,String kode) throws Exception;
+    public List<Anggota> getAllAnggota(Connection con) throws Exception;
+
+    
 }

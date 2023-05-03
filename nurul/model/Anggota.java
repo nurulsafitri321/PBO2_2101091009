@@ -14,6 +14,10 @@ public class Anggota {
     private String alamat;
     private String jenisKelamin;
     
+    public Anggota(){
+        
+    }
+    
     public Anggota(String kodeAnggota, String namaAnggota, String alamat, String jenisKelamin) {
         this.kodeAnggota = kodeAnggota;
         this.namaAnggota = namaAnggota;
