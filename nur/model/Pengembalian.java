@@ -4,6 +4,9 @@
  */
 package nur.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  *
  * @author DELL
@@ -25,6 +28,10 @@ public class Pengembalian {
         this.terlambat = terlambat;
         this.denda = denda;
     }
+
+    public Pengembalian() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     
 
@@ -41,6 +48,9 @@ public class Pengembalian {
     }
 
     public String getTgldikembalikan() {
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        Date tgl = new Date();
+        tgldikembalikan = s.format(tgl);
         return tgldikembalikan;
     }
 
